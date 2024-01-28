@@ -42,7 +42,7 @@ func main() {
 	if port == "" {
 		port = "3333"
 	}
-	http.ListenAndServe("0.0.0.0:"+port, r)
+	http.ListenAndServe(":"+port, r)
 }
 
 func HandleError(err error) {

@@ -5,10 +5,11 @@ import "fmt"
 type Suggestion struct {
 	Word     string
 	Distance int
+	Score    int
 }
 
 func (s Suggestion) String() string {
-	return fmt.Sprintf("%s (distance %d)\n", s.Word, s.Distance)
+	return fmt.Sprintf("%s (distance %d | norm %d)\n", s.Word, s.Distance, s.Score)
 }
 
 type Suggestions []Suggestion

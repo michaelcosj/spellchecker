@@ -1,10 +1,23 @@
 {{define "result_list"}}
-<ul>
-    {{range .}}
-    <li class="text-sm md:text-base flex gap-5 justify-between items-center">
-        <p> {{.Word}} </p>
-        <p> (rank {{.Distance}}) </p>
-    </li>
-    {{end}}
-</ul>
+<div class="flex flex-col gap-3 justify-center items-center">
+    <table class="table-auto border-collapse border-spacing-2">
+        <caption class="caption-top">
+            Suggestions
+        </caption>
+        <thead>
+            <tr class="text-white">
+                <th class="border bg-blue-400 px-5">Word</th>
+                <th class="border bg-blue-400 px-3">Similarity Score (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .}}
+            <tr class="odd:bg-white even:bg-blue-50">
+                <td class="text-center">{{.Word}}</td>
+                <td class="text-center">{{.Score}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</div>
 {{end}}

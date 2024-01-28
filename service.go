@@ -11,11 +11,25 @@ type Service struct {
 
 func (s *Service) GetSuggestions(word string, count int) []Suggestion {
 	var suggestions []Suggestion
+
+	maxDistance := 0
 	for _, w := range s.dictionary {
-        dictWord := strings.ToLower(w)
-		editDistance := levenshteinDistance(dictWord, strings.ToLower(word))
-		suggestions = append(suggestions, Suggestion{dictWord, editDistance})
+		dictWord := strings.ToLower(w)
+		ld := levenshteinDistance(dictWord, strings.ToLower(word))
+
+		if ld > maxDistance {
+			maxDistance = ld
+		}
+
+		suggestions = append(suggestions, Suggestion{dictWord, ld, 0})
 	}
+
+	// calculate the similarity score based on the edit distance
+	for i := 0; i < len(suggestions); i++ {
+		suggestions[i].Score =
+			int((1 - float32(suggestions[i].Distance)/float32(maxDistance)) * 100)
+	}
+
 	sort.Sort(Suggestions(suggestions))
 
 	if count >= len(suggestions) {
