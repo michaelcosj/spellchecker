@@ -37,7 +37,7 @@ func main() {
 	r.Handle("/*", http.StripPrefix("/", fs))
 
 	log.Printf("Starting server...\n")
-	http.ListenAndServe(":3333", r)
+	http.ListenAndServe(":" + os.Getenv("PORT"), r)
 }
 
 func HandleError(err error) {
