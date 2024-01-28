@@ -14,13 +14,13 @@ import (
 func main() {
 	// wordlist obtained from https://www.mit.edu/~ecprice/wordlist.10000
 	data, err := os.ReadFile("./assets/wordlist")
-    HandleError(err)
+	HandleError(err)
 
 	dictionary := strings.Fields(string(data))
 	service := &Service{dictionary}
 
 	t, err := template.ParseGlob("./templates/*.html")
-    HandleError(err)
+	HandleError(err)
 	handler := &Handler{service, t}
 
 	r := chi.NewRouter()
@@ -37,7 +37,12 @@ func main() {
 	r.Handle("/*", http.StripPrefix("/", fs))
 
 	log.Printf("Starting server...\n")
-	http.ListenAndServe(":" + os.Getenv("PORT"), r)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3333"
+	}
+	http.ListenAndServe("0.0.0.0:"+port, r)
 }
 
 func HandleError(err error) {
