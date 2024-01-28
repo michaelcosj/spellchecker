@@ -1,0 +1,10 @@
+{{define "result_list"}}
+<ul>
+    {{range .}}
+    <li class="text-sm md:text-base flex gap-5 justify-between items-center">
+        <p> {{.Word}} </p>
+        <p> (rank {{.Distance}}) </p>
+    </li>
+    {{end}}
+</ul>
+{{end}}
