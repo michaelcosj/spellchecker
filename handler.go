@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type Handler struct {
@@ -29,7 +30,7 @@ func (h *Handler) SpellCheck(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(400), 400)
 	}
 
-	suggestions := h.service.GetSuggestions(word, count)
+	suggestions := h.service.GetSuggestions(strings.TrimSpace(word), count)
     if err := h.templates.ExecuteTemplate(w, "result_list", suggestions); err != nil {
 		http.Error(w, http.StatusText(500), 500)
     }
