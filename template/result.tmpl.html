@@ -1,20 +1,25 @@
 {{define "result_list"}}
 <div class="flex flex-col gap-3 justify-center items-center">
+    {{if .IsWordInDictionary}}
+    <h1 style="color: green;">Input word is correct</h1>
+    {{else}}
+    <h1 style="color: red; text-decoration:underline wavy red;">Input word is incorrect</h1>
+    {{end}}
     <table class="table-auto border-collapse border-spacing-2">
         <caption class="caption-top">
             Suggestions
         </caption>
         <thead>
             <tr class="text-white">
-                <th class="border bg-blue-400 px-5">Word</th>
+                <th class="border bg-blue-400 px-5">Suggestion</th>
                 <th class="border bg-blue-400 px-3">Similarity Score (%)</th>
             </tr>
         </thead>
         <tbody>
-            {{range .}}
+            {{range .Suggestions}}
             <tr class="odd:bg-white even:bg-blue-50">
-                <td class="text-center">{{.Word}}</td>
-                <td class="text-center">{{.Score}}</td>
+                <td class="text-center px-3">{{.Word}}</td>
+                <td class="text-center px-3">{{.Score}}</td>
             </tr>
             {{end}}
         </tbody>
