@@ -1,7 +1,10 @@
 package main
 
 import (
+	"embed"
+	_ "embed"
 	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -11,16 +14,25 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func main() {
-	// wordlist obtained from https://www.mit.edu/~ecprice/wordlist.10000
-	data, err := os.ReadFile("./assets/wordlist")
-	HandleError(err)
+// wordlist obtained from https://www.mit.edu/~ecprice/wordlist.10000
+// wordlist.2 obtained from https://github.com/dwyl/english-words
+//
+//go:embed assets/wordlist.2
+var wordlist string
 
-	dictionary := strings.Fields(string(data))
+//go:embed template/*
+var content embed.FS
+
+//go:embed assets/public/*
+var public embed.FS
+
+func main() {
+	dictionary := strings.Fields(string(wordlist))
 	service := &Service{dictionary}
 
-	t, err := template.ParseGlob("./templates/*.html")
+	t, err := template.ParseFS(content, "template/*.tmpl.html")
 	HandleError(err)
+
 	handler := &Handler{service, t}
 
 	r := chi.NewRouter()
@@ -33,8 +45,10 @@ func main() {
 	r.Get("/", handler.Index)
 	r.Post("/spellcheck", handler.SpellCheck)
 
-	fs := http.FileServer(http.Dir("./assets/public/"))
-	r.Handle("/*", http.StripPrefix("/", fs))
+	publicFs, err := fs.Sub(public, "assets/public")
+	HandleError(err)
+
+	r.Handle("/*", http.StripPrefix("/", http.FileServer(http.FS(publicFs))))
 
 	log.Printf("Starting server...\n")
 
