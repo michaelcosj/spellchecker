@@ -9,19 +9,27 @@ type Service struct {
 	dictionary []string
 }
 
-func (s *Service) GetSuggestions(word string, count int) []Suggestion {
+func (s *Service) GetSuggestions(word string, count int) ([]Suggestion, bool) {
 	var suggestions []Suggestion
 
 	maxDistance := 0
+	isWordInDictionary := false
 	for _, w := range s.dictionary {
 		dictWord := strings.ToLower(w)
-		ld := levenshteinDistance(dictWord, strings.ToLower(word))
+		searchWord := strings.ToLower(word)
 
-		if ld > maxDistance {
-			maxDistance = ld
+		distance := 0
+		if dictWord == searchWord {
+			isWordInDictionary = true
+		} else {
+			distance = levenshteinDistance(dictWord, searchWord)
 		}
 
-		suggestions = append(suggestions, Suggestion{dictWord, ld, 0})
+		if distance > maxDistance {
+			maxDistance = distance
+		}
+
+		suggestions = append(suggestions, Suggestion{dictWord, distance, 0})
 	}
 
 	// calculate the similarity score based on the edit distance
@@ -35,7 +43,7 @@ func (s *Service) GetSuggestions(word string, count int) []Suggestion {
 	if count >= len(suggestions) {
 		count = len(suggestions)
 	}
-	return suggestions[:count]
+	return suggestions[:count], isWordInDictionary
 }
 
 func levenshteinDistance(src, target string) int {
